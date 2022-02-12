@@ -15,6 +15,13 @@ public class Console {
         return scanner.nextLine();
     }
 
+    public void pressEnterToContinue() {
+        System.out.print("Press Enter to continue ");
+        scanner.nextLine();
+
+        System.out.println();
+    }
+
     @Nullable
     public <TValue> TValue select(
         @Nullable String nullLabel,
@@ -44,7 +51,7 @@ public class Console {
 
         list(labels, 1);
 
-        int choice = readIntBetween(0, labels.size() + 1, prompt);
+        int choice = readIntBetween(0, labels.size(), prompt);
         System.out.println();
 
         if (choice == 0) {

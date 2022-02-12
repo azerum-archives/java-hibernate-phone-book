@@ -14,8 +14,8 @@ public class PhoneNumber {
     private String value;
 
     @ManyToOne
-    @JoinColumn(name = "personId", nullable = false)
-    private Person person;
+    @JoinColumn(name = "ownerId", nullable = false)
+    private Person owner;
 
     public PhoneNumber(String value) {
         this.value = value;
@@ -35,11 +35,16 @@ public class PhoneNumber {
         this.value = value;
     }
 
-    public Person getPerson() {
-        return person;
+    public Person getOwner() {
+        return owner;
     }
 
-    public void setPerson(Person person) {
-        this.person = person;
+    public void setOwner(Person owner) {
+        this.owner = owner;
+    }
+
+    @Override
+    public String toString() {
+        return value;
     }
 }

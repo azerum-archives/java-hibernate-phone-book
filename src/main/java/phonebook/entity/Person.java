@@ -20,7 +20,7 @@ public class Person {
     @Column(nullable = false, length = MAX_NAME_PART_LENGTH)
     private String lastName;
 
-    @OneToMany(mappedBy = "person")
+    @OneToMany(mappedBy = "owner")
     private final Set<PhoneNumber> phoneNumbers = new HashSet<>();
 
     public Person(String firstName, String lastName) {
@@ -58,7 +58,7 @@ public class Person {
         throwIfPhoneNumberIsLinkedToOtherPerson(number);
 
         phoneNumbers.add(number);
-        number.setPerson(this);
+        number.setOwner(this);
     }
 
     /**
@@ -71,7 +71,7 @@ public class Person {
     }
 
     private void throwIfPhoneNumberIsLinkedToOtherPerson(PhoneNumber p) {
-        Person person = p.getPerson();
+        Person person = p.getOwner();
 
         if (person != null && person != this) {
             throw new IllegalArgumentException(

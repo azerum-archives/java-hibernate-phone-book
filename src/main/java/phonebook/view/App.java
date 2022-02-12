@@ -39,6 +39,8 @@ public class App {
     private void listAllPeople() {
         List<Person> people = phoneBook.getAllPeople();
         console.list(people, 1);
+
+        console.pressEnterToContinue();
     }
 
     private void selectPersonAndManagePhones() {
@@ -46,7 +48,7 @@ public class App {
 
         while (true) {
             Person person = console.select(
-                "Cancel",
+                null,
                 people,
                 "Select the person whose numbers to manage (0 to cancel) > "
             );
@@ -70,6 +72,9 @@ public class App {
         options.put("Remove number", this::removeNumberOf);
 
         while (true) {
+            System.out.println("Selected " + person);
+            System.out.println();
+
             Function<Person, Boolean> handler = console.select(
                 "Go back",
                 options,
@@ -90,6 +95,7 @@ public class App {
         List<PhoneNumber> numbers = phoneBook.getAllNumbersOf(person);
         console.list(numbers, 1);
 
+        console.pressEnterToContinue();
         return true;
     }
 
@@ -98,17 +104,17 @@ public class App {
         System.out.println("[Leave the line empty to cancel adding]");
         System.out.println();
 
-        PhoneNumber number;
+        String value;
 
         while (true) {
-            String value = console.readLine("Enter phone number > ");
-            number = new PhoneNumber(value);
+            value = console.readLine("Enter phone number > ");
+            PhoneNumber number = phoneBook.findNumberByValue(value);
 
-            Person owner = phoneBook.findPersonByNumber(number);
-
-            if (owner == null) {
+            if (number == null) {
                 break;
             }
+
+            Person owner = number.getOwner();
 
             if (owner.getId() == person.getId()) {
                 System.out.println(person + " already has this phone number");
@@ -122,8 +128,10 @@ public class App {
             System.out.println();
         }
 
-        number.setPerson(person);
-        phoneBook.add(number);
+        PhoneNumber number = new PhoneNumber(value);
+        person.addPhoneNumber(number);
+
+        phoneBook.update(person);
 
         return true;
     }
