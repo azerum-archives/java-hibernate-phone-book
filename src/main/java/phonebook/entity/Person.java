@@ -17,7 +17,7 @@ public class Person {
     @Column(nullable = false, length = MAX_NAME_PART_LENGTH)
     private String lastName;
 
-    @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private final List<PhoneNumber> phoneNumbers = new ArrayList<>();
 
     public Person(String firstName, String lastName) {

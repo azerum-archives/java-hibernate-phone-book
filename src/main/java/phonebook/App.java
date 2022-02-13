@@ -1,12 +1,12 @@
 package phonebook;
 
+import java.util.function.Consumer;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.function.Function;
-
 import org.hibernate.Transaction;
+
 import phonebook.dal.Queries;
 import phonebook.entity.Person;
 import phonebook.entity.PhoneNumber;
@@ -63,25 +63,21 @@ public class App {
     private void selectPersonAndManagePhones() {
         List<Person> people = Queries.query(session).getAllPeople();
 
-        while (true) {
-            Person person = console.select(
-                null,
-                people,
-                "Select the person whose numbers to manage (0 to cancel) > "
-            );
+        Person person = console.select(
+            null,
+            people,
+            "Select the person whose numbers to manage (0 to cancel) > "
+        );
 
-            if (person == null) {
-                return;
-            }
-
-            if (managePhonesOf(person)) {
-                return;
-            }
+        if (person == null) {
+            return;
         }
+
+        managePhonesOf(person);
     }
 
-    private boolean managePhonesOf(Person person) {
-        LinkedHashMap<String, Function<Person, Boolean>> options =
+    private void managePhonesOf(Person person) {
+        LinkedHashMap<String, Consumer<Person>> options =
             new LinkedHashMap<>();
 
         options.put("List all numbers", this::listAllNumbersOf);
@@ -92,32 +88,27 @@ public class App {
             System.out.println("Selected " + person);
             System.out.println();
 
-            Function<Person, Boolean> handler = console.select(
+            Consumer<Person> handler = console.select(
                 "Go back",
                 options,
                 "> "
             );
 
             if (handler == null) {
-                return false;
+                return;
             }
 
-            if (handler.apply(person)) {
-                return true;
-            }
+            handler.accept(person);
         }
     }
 
-    private boolean listAllNumbersOf(Person person) {
+    private void listAllNumbersOf(Person person) {
         console.list(person.getPhoneNumbers(), 1);
         console.pressEnterToContinue();
-
-        return true;
     }
 
-    private boolean addNumberFor(Person person) {
+    private void addNumberFor(Person person) {
         System.out.println("Adding new number for " + person);
-        System.out.println("[Leave the line empty to cancel adding]");
         System.out.println();
 
         String value;
@@ -125,6 +116,10 @@ public class App {
         while (true) {
             value = console.readLine("Enter phone number > ");
             System.out.println();
+
+            if (value.isEmpty()) {
+                return;
+            }
 
             PhoneNumber number =
                 Queries.query(session).findNumberByValue(value);
@@ -143,15 +138,18 @@ public class App {
                 System.out.println("This phone number is already in the book");
                 System.out.println("Used by " + owner);
             }
+
+            System.out.println();
+            System.out.println("Leave the line empty to cancel adding");
         }
 
-        person.addPhoneNumber(new PhoneNumber(value));
-        session.update(person);
+        PhoneNumber number = new PhoneNumber(value);
+        person.addPhoneNumber(number);
 
-        return true;
+        session.save(number);
     }
 
-    private boolean removeNumberOf(Person person) {
+    private void removeNumberOf(Person person) {
         List<PhoneNumber> numbers = person.getPhoneNumbers();
 
         PhoneNumber number = console.select(
@@ -160,14 +158,10 @@ public class App {
             "Select the number to remove (0 to cancel) > "
         );
 
-        if (number == null) {
-            return false;
+        if (number != null) {
+            person.removePhoneNumber(number);
+            session.delete(number);
         }
-
-        person.removePhoneNumber(number);
-        session.update(person);
-
-        return true;
     }
 
     private void addPerson() {

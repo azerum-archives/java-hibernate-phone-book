@@ -16,7 +16,7 @@ public class Console {
     }
 
     public void pressEnterToContinue() {
-        System.out.print("Press Enter to continue ");
+        System.out.print("Press Enter to continue > ");
         scanner.nextLine();
 
         System.out.println();
