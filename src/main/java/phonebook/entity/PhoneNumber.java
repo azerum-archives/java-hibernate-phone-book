@@ -13,7 +13,7 @@ public class PhoneNumber {
     @Column(unique = true, nullable = false, length = MAX_VALUE_LENGTH)
     private String value;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ownerId", nullable = false)
     private Person owner;
 

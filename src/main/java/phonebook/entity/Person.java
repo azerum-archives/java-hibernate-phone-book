@@ -1,10 +1,7 @@
 package phonebook.entity;
 
+import java.util.*;
 import javax.persistence.*;
-
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 public class Person {
@@ -20,8 +17,8 @@ public class Person {
     @Column(nullable = false, length = MAX_NAME_PART_LENGTH)
     private String lastName;
 
-    @OneToMany(mappedBy = "owner")
-    private final Set<PhoneNumber> phoneNumbers = new HashSet<>();
+    @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private final List<PhoneNumber> phoneNumbers = new ArrayList<>();
 
     public Person(String firstName, String lastName) {
         this.firstName = firstName;
@@ -83,8 +80,8 @@ public class Person {
     /**
      * @return _unmodifiable_ view of all PhoneNumbers
      */
-    public Set<PhoneNumber> getPhoneNumbers() {
-        return Collections.unmodifiableSet(phoneNumbers);
+    public List<PhoneNumber> getPhoneNumbers() {
+        return Collections.unmodifiableList(phoneNumbers);
     }
 
     @Override

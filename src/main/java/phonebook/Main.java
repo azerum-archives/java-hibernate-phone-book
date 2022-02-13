@@ -1,10 +1,11 @@
 package phonebook;
 
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
 import java.util.logging.Logger;
 
-import phonebook.dao.PhoneBook;
-import phonebook.view.App;
+import phonebook.entity.Person;
+import phonebook.entity.PhoneNumber;
 
 public class Main {
     public static void main(String[] args) {
@@ -12,14 +13,15 @@ public class Main {
         Logger.getLogger("org.hibernate")
             .setLevel(java.util.logging.Level.OFF);
 
-        AnnotationConfigApplicationContext context =
-            new AnnotationConfigApplicationContext(SpringConfig.class);
+        SessionFactory sessionFactory = new Configuration()
+            .configure("hibernate.cfg.xml")
+            .addAnnotatedClass(Person.class)
+            .addAnnotatedClass(PhoneNumber.class)
+            .buildSessionFactory();
 
-        PhoneBook phoneBook = context.getBean(PhoneBook.class);
-
-        App app = new App(phoneBook);
+        App app = new App(sessionFactory);
         app.start();
 
-        context.close();
+        sessionFactory.close();
     }
 }
