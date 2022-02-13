@@ -43,4 +43,22 @@ public class Queries {
             return null;
         }
     }
+
+    @Nullable
+    public Person findPersonByFullName(String firstName, String lastName) {
+        Query<Person> query = session.createQuery(
+                "from Person where firstName = :firstName and lastName = :lastName",
+                Person.class
+        )
+            .setCacheable(true)
+            .setParameter("firstName", firstName)
+            .setParameter("lastName", lastName);
+
+        try {
+            return query.getSingleResult();
+        }
+        catch (NoResultException e) {
+            return null;
+        }
+    }
 }

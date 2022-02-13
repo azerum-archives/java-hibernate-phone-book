@@ -16,10 +16,22 @@ public class Console {
     }
 
     public void pressEnterToContinue() {
-        System.out.print("Press Enter to continue > ");
+        System.out.print("Press Enter to continue... ");
         scanner.nextLine();
 
         System.out.println();
+    }
+
+    public boolean yesNo(String question, boolean defaultAnswer) {
+        System.out.print(question);
+
+        String answer = scanner.nextLine().toLowerCase(Locale.ROOT);
+        System.out.println();
+
+        if (answer.equals("y")) return true;
+        if (answer.equals("n")) return false;
+
+        return defaultAnswer;
     }
 
     @Nullable
